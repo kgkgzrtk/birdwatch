@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "birdwatch",
   "displayName": "Birdwatch",
-  "version": "1.2.0",
+  "version": "0.2.0",
   "description": "Per-project bird-call spatial audio for monitoring Claude Code sessions",
   "author": { "name": "Scibit" },
   "license": "MIT",
