@@ -1,5 +1,6 @@
 {
   "name": "birdwatch",
+  "description": "Birdwatch — turns Claude Code notifications into per-project birdsong (spatial-audio monitoring, hooks-only).",
   "owner": { "name": "kgkgzrtk" },
   "plugins": [
     { "name": "birdwatch", "source": "./" }
