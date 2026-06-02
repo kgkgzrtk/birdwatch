@@ -105,12 +105,12 @@ strip_md() {
     | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//'
 }
 is_question() {
-  grep -qE '[?？]|ですか|でしょうか|ください|どうしますか|よろしい' <<<"$1"
+  grep -qiE '[?？]|\b(which|should i|shall i|do you want|would you like|let me know|please (confirm|choose|select|decide))\b' <<<"$1"
 }
 is_substantive() {
   local t=$1
   (( ${#t} >= 20 )) || return 1
-  grep -qE '^(完了|終了|OK|ok|成功|ありがとうございました|お疲れさま.*)[。！]?$' <<<"$t" && return 1
+  grep -qiE '^(done|ok|okay|finished|complete|completed|success|thanks|thank you|all set)[.!]?$' <<<"$t" && return 1
   return 0
 }
 
@@ -119,7 +119,7 @@ is_substantive() {
 text=""; tier=""
 case "$evt" in
   PermissionRequest|Permission)
-    tier=A; text="許可を求めています ${tool:-}"
+    tier=A; text="Permission requested ${tool:-}"
     ;;
   Notification)
     [[ -n "$msg" ]] || exit 0
@@ -155,7 +155,7 @@ touch "$LOCK"
 # dist: 0 = at listener's ear, 1 = at horizon. Volume ∝ 1 / (1 + 3·dist²).
 # Tier A: lean in close (whisper near ear). Tier B: stay far (background chirp).
 case "$evt" in
-  PermissionRequest|Permission) dist=0.12 ;;   # 耳元
+  PermissionRequest|Permission) dist=0.12 ;;   # at the ear
   Notification)                 dist=0.22 ;;
   Stop)                         dist=$([[ "$tier" == "A" ]] && echo 0.28 || echo 0.90) ;;
   *)                            dist=0.55 ;;

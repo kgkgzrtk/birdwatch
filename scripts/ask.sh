@@ -45,7 +45,7 @@ pick_and_answer() {
   local groups
   groups=$(list_pending)
   if [[ -z "$groups" || "$groups" == "[]" ]]; then
-    echo "未回答の質問はありません。"
+    echo "No pending questions."
     return 0
   fi
 
@@ -56,7 +56,7 @@ pick_and_answer() {
   local N
   N=$(jq 'length' <<<"$FLAT")
 
-  printf "\n=== 未回答の質問 (%d 件) ===\n" "$N"
+  printf "\n=== Pending questions (%d) ===\n" "$N"
   printf '%s\n' "$FLAT" | jq -r '
     group_by(.project) | .[] | "\n■ " + .[0].project,
     (.[] | "  [\(.priority)] \(.text // .event)  (tool=\(.tool // "-")  sid=\(.session_id[0:8]))")
@@ -69,14 +69,14 @@ pick_and_answer() {
     "  \(.key+1) [\(.value.priority)] \(.value.project | split("/") | last) · \(.value.text // .value.event)"
   ' <<<"$FLAT"
 
-  printf "\n番号 (回答する質問) または q で中止: "
+  printf "\nNumber (question to answer) or q to cancel: "
   read -r CH
   [[ "$CH" == "q" || -z "$CH" ]] && return 0
 
   local ENTRY
   ENTRY=$(jq -c ".[$((CH-1))]" <<<"$FLAT")
   if [[ -z "$ENTRY" || "$ENTRY" == "null" ]]; then
-    echo "無効な番号"; return 1
+    echo "Invalid number"; return 1
   fi
 
   local PANE SID TEXT
@@ -84,14 +84,14 @@ pick_and_answer() {
   SID=$(jq -r '.session_id' <<<"$ENTRY")
   TEXT=$(jq -r '.text // .event' <<<"$ENTRY")
 
-  printf "→ [%s] に回答: " "${PANE:-$SID}"
+  printf "→ reply to [%s]: " "${PANE:-$SID}"
   read -r REPLY
-  [[ -z "$REPLY" ]] && { echo "空のメッセージ、中止"; return 0; }
+  [[ -z "$REPLY" ]] && { echo "Empty message, cancelled"; return 0; }
 
   if [[ -n "$PANE" && "$PANE" != "null" ]] && send_pane "$PANE" "$REPLY" 2>/dev/null; then
-    echo "送信: $PANE ← $REPLY"
+    echo "Sent: $PANE ← $REPLY"
   else
-    echo "tmux pane が分からないため送信できません（手動で入力してください）: $REPLY"
+    echo "Cannot send (unknown tmux pane); type it manually: $REPLY"
   fi
 
   # Mark the matched entry as answered
@@ -114,7 +114,7 @@ record_vad() {
 
 transcribe_wav() {
   local WAV=$1
-  whisper-cli -m "$MODEL" -l ja -nt -np -f "$WAV" 2>/dev/null \
+  whisper-cli -m "$MODEL" -l en -nt -np -f "$WAV" 2>/dev/null \
     | tr -d '\r' \
     | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
     | tr -d '\n'
@@ -127,7 +127,7 @@ auto_send() {
   local ENTRY PANE SID TS
   ENTRY=$(jq -c 'select(.status=="pending")' "$Q" | jq -sc 'sort_by(.priority, .ts) | .[0]')
   if [[ "$ENTRY" == "null" || -z "$ENTRY" ]]; then
-    echo "(未回答なし) 転写: $TEXT"
+    echo "(no pending) transcript: $TEXT"
     return 0
   fi
   PANE=$(jq -r '.pane' <<<"$ENTRY")
@@ -139,7 +139,7 @@ auto_send() {
       'if (.ts==$ts and .session_id==$sid) then .status="answered" else . end' \
       "$Q" > "${Q}.tmp" && mv "${Q}.tmp" "$Q"
   else
-    printf '(pane 不明) 転写: %s\n' "$TEXT"
+    printf '(unknown pane) transcript: %s\n' "$TEXT"
   fi
 }
 
@@ -148,7 +148,7 @@ case "${1:-}" in
     pick_and_answer_mode=no
     FLAT=$(jq -c 'select(.status=="pending")' "$Q" | jq -sc 'sort_by(.priority, .ts)')
     N=$(jq 'length' <<<"$FLAT" 2>/dev/null || echo 0)
-    if (( N == 0 )); then echo "未回答の質問はありません。"; exit 0; fi
+    if (( N == 0 )); then echo "No pending questions."; exit 0; fi
     jq -r '
       group_by(.project) | .[] | "\n■ " + .[0].project,
       (.[] | "  [\(.priority)] \(.text // .event)  (tool=\(.tool // "-"))")
@@ -164,18 +164,18 @@ case "${1:-}" in
   mic)
     # Record + transcribe + answer picker
     WAV=/tmp/cc-ptt-single.wav
-    printf "🎤 話してください (VAD で自動停止)…\n" >&2
+    printf "🎤 Speak now (auto-stops on silence)…\n" >&2
     record_vad "$WAV"
     TEXT=$(transcribe_wav "$WAV"); rm -f "$WAV"
     if [[ -z "${TEXT:-}" ]]; then
-      echo "転写結果なし"; exit 1
+      echo "No transcript"; exit 1
     fi
-    echo "転写: $TEXT"
+    echo "Transcript: $TEXT"
     # Pick target question then send transcribed text as the answer
     FLAT=$(jq -c 'select(.status=="pending")' "$Q" | jq -sc 'sort_by(.priority, .ts)')
     N=$(jq 'length' <<<"$FLAT" 2>/dev/null || echo 0)
     if (( N == 0 )); then
-      echo "対象の未回答質問がありません（手動で ask.sh send <pane> \"$TEXT\" を使ってください）"
+      echo "No pending question to answer (use 'ask.sh send <pane> \"$TEXT\"' manually)"
       exit 0
     fi
     jq -r '
@@ -187,7 +187,7 @@ case "${1:-}" in
       to_entries | .[] |
       "  \(.key+1) \(.value.project | split("/") | last) · \(.value.text // .value.event)"
     ' <<<"$FLAT"
-    printf "\n送信先の番号 (q で中止): "
+    printf "\nTarget number (q to cancel): "
     read -r CH
     [[ "$CH" == "q" || -z "$CH" ]] && exit 0
     ENTRY=$(jq -c ".[$((CH-1))]" <<<"$FLAT")
@@ -195,9 +195,9 @@ case "${1:-}" in
     SID=$(jq -r '.session_id' <<<"$ENTRY")
     TS=$(jq -r '.ts' <<<"$ENTRY")
     if [[ -n "$PANE" && "$PANE" != "null" ]] && send_pane "$PANE" "$TEXT"; then
-      echo "送信: $PANE ← $TEXT"
+      echo "Sent: $PANE ← $TEXT"
     else
-      echo "tmux pane 不明のため送信不可: $TEXT"
+      echo "Cannot send (unknown tmux pane): $TEXT"
     fi
     jq -c --arg ts "$TS" --arg sid "$SID" \
       'if (.ts==$ts and .session_id==$sid) then .status="answered" else . end' \
@@ -206,27 +206,27 @@ case "${1:-}" in
   watch)
     # Always-open microphone loop: speak → auto-stop → transcribe → route → loop
     # Ctrl-C to exit. Each utterance is auto-sent to the highest-priority pending question.
-    trap 'echo ""; echo "watch 終了"; exit 0' INT TERM
+    trap 'echo ""; echo "watch stopped"; exit 0' INT TERM
     if ! command -v whisper-cli >/dev/null; then
-      echo "whisper-cli が必要 (brew install whisper-cpp)" >&2; exit 1
+      echo "whisper-cli required (brew install whisper-cpp)" >&2; exit 1
     fi
-    [[ -f "$MODEL" ]] || { echo "モデルが無い: $MODEL" >&2; exit 1; }
-    echo "常時マイク ON。話し始めたら自動録音、1.5秒の無音で停止。Ctrl-C で終了。"
+    [[ -f "$MODEL" ]] || { echo "Model not found: $MODEL" >&2; exit 1; }
+    echo "Mic always on. Recording starts when you speak, stops after 1.5s of silence. Ctrl-C to exit."
     while :; do
       WAV=/tmp/cc-ptt-watch.wav
       printf "\n🎤 listening… "
       record_vad "$WAV"
       if [[ ! -s "$WAV" ]]; then
-        printf "(音声なし) 再待機\n"
+        printf "(no audio) waiting again\n"
         continue
       fi
-      printf "転写中…\n"
+      printf "transcribing…\n"
       TEXT=$(transcribe_wav "$WAV"); rm -f "$WAV"
-      [[ -z "$TEXT" ]] && { echo "(転写空) スキップ"; continue; }
+      [[ -z "$TEXT" ]] && { echo "(empty transcript) skipping"; continue; }
       # Ignore common Whisper silent-input hallucinations
       case "$TEXT" in
-        "ご視聴ありがとうございました"*|"ありがとうございました"*|"Thank you"*|" Thank you"*)
-          echo "(無音ハルシネーション) 無視: $TEXT"
+        "Thank you"*|" Thank you"*|"Thanks for watching"*|"Thank you for watching"*)
+          echo "(silence hallucination) ignoring: $TEXT"
           continue ;;
       esac
       auto_send "$TEXT"

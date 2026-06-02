@@ -135,7 +135,7 @@ def fairies() -> list[dict]:
 
 
 INDEX_HTML = r"""<!DOCTYPE html>
-<html lang="ja"><head><meta charset="UTF-8"><title>Spatial Fairies</title>
+<html lang="en"><head><meta charset="UTF-8"><title>Spatial Fairies</title>
 <style>
   body{margin:0;background:#05070b;color:#cdd6f4;font-family:-apple-system,system-ui,sans-serif;overflow:hidden}
   #hud{position:fixed;top:8px;left:12px;font-size:12px;opacity:.7;z-index:2}
@@ -218,9 +218,9 @@ function render(){
   // Ring labels show how audible each radius is.
   ctx.fillStyle = 'rgba(166,227,161,0.55)'; ctx.font = '9px ui-monospace';
   ctx.textAlign = 'left';
-  ctx.fillText('P1 耳元 vol 0.96', cx + 6, cy - R*0.15);
-  ctx.fillText('P2 vol 0.57',      cx + 6, cy - R*0.40);
-  ctx.fillText('P4 囁き vol 0.29', cx + 6, cy - R*0.82);
+  ctx.fillText('P1 ear vol 0.96',     cx + 6, cy - R*0.15);
+  ctx.fillText('P2 vol 0.57',         cx + 6, cy - R*0.40);
+  ctx.fillText('P4 whisper vol 0.29', cx + 6, cy - R*0.82);
 
   let speakingCount = 0;
   const spkSids = [];
