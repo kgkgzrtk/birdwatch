@@ -47,6 +47,11 @@ end so existing project→bird mappings stay stable).
 
 ## License
 
-Code: MIT. Bird recordings: Wikimedia Commons under CC BY / CC BY-SA / Public Domain —
-per-recording attribution in [`assets/birds/ATTRIBUTIONS.md`](assets/birds/ATTRIBUTIONS.md),
-which must ship with redistributions.
+This repository is **mixed-license**:
+
+- **Code** — scripts, manifests, dashboard, and banner artwork — is MIT, see [`LICENSE`](LICENSE).
+- **Bird recordings** in `assets/birds/samples/` are sourced from Wikimedia Commons and
+  individually licensed **CC BY-SA 4.0 / 3.0**, **CC BY 2.5**, or **Public Domain** (none
+  NonCommercial or NoDerivatives). They are modified excerpts (trimmed, normalized) and are
+  **not** covered by the MIT license. Redistribution must preserve attribution and share-alike
+  per [`assets/birds/ATTRIBUTIONS.md`](assets/birds/ATTRIBUTIONS.md).
