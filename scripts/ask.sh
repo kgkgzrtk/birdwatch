@@ -145,7 +145,6 @@ auto_send() {
 
 case "${1:-}" in
   list)
-    pick_and_answer_mode=no
     FLAT=$(jq -c 'select(.status=="pending")' "$Q" | jq -sc 'sort_by(.priority, .ts)')
     N=$(jq 'length' <<<"$FLAT" 2>/dev/null || echo 0)
     if (( N == 0 )); then echo "No pending questions."; exit 0; fi
@@ -225,7 +224,7 @@ case "${1:-}" in
       [[ -z "$TEXT" ]] && { echo "(empty transcript) skipping"; continue; }
       # Ignore common Whisper silent-input hallucinations
       case "$TEXT" in
-        "Thank you"*|" Thank you"*|"Thanks for watching"*|"Thank you for watching"*)
+        "Thank you"*|" Thank you"*|"Thanks for watching"*)
           echo "(silence hallucination) ignoring: $TEXT"
           continue ;;
       esac

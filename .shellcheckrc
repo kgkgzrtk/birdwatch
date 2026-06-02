@@ -1,0 +1,4 @@
+# birdwatch hook scripts intentionally use a few patterns shellcheck flags:
+disable=SC2012  # `ls` on our own controlled /tmp queue dir (filenames are <ts>-<pid>, no spaces)
+disable=SC2016  # single-quoted sed/awk expressions are deliberate (no shell expansion wanted)
+disable=SC2045  # iterating `ls -1tr` for mtime (oldest-first) order over controlled queue files

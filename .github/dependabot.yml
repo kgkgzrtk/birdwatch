@@ -1,0 +1,10 @@
+version: 2
+updates:
+  # The plugin ships shell + stdlib-Python only (no package manifests),
+  # so the sole ecosystem to keep current is GitHub Actions.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci

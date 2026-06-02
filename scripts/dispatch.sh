@@ -207,7 +207,7 @@ p=$(awk -v home="$p_home" -v amp="$AMP" -v ph="$PHASE" 'BEGIN{
 
 # Equal-power pan, with tier-based compression toward center
 p_eff=$(awk -v p="$p" -v g="$pan_gain" 'BEGIN{printf "%.4f", 0.5 + (p-0.5)*g}')
-read L R < <(awk -v p="$p_eff" 'BEGIN{pi=3.14159265; printf "%.3f %.3f", cos(pi/2*p), sin(pi/2*p)}')
+read -r L R < <(awk -v p="$p_eff" 'BEGIN{pi=3.14159265; printf "%.3f %.3f", cos(pi/2*p), sin(pi/2*p)}')
 
 text=$(printf '%s' "$text" | tr -d '\r' | cut -c1-160)
 

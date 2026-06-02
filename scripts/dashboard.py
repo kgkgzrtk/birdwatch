@@ -10,6 +10,7 @@ Reads state from ${CLAUDE_PLUGIN_DATA}/birdwatch (falls back to ~/.claude/state/
 
 Computes pan drift the same way dispatch.sh does, so positions match audio.
 """
+
 from __future__ import annotations
 import http.server
 import json
@@ -23,8 +24,8 @@ PORT = int(os.environ.get("BIRDWATCH_DASH_PORT", "8765"))
 _DATA = os.environ.get("CLAUDE_PLUGIN_DATA") or str(Path.home() / ".claude/state")
 ROOT = Path(_DATA) / "birdwatch"
 
-DRIFT_WINDOW = 30    # seconds — matches dispatch.sh BURST calc
-ACTIVE_WINDOW = 1800 # seconds — hide sessions idle longer than 30min
+DRIFT_WINDOW = 30  # seconds — matches dispatch.sh BURST calc
+ACTIVE_WINDOW = 1800  # seconds — hide sessions idle longer than 30min
 
 
 def load_questions_latest_by_sid() -> dict[str, dict]:
@@ -79,6 +80,7 @@ def drift(home: float, burst: int, sid_hash: int, now: float) -> tuple[float, fl
 def cksum_like(s: str) -> int:
     """POSIX cksum (CRC) — used by dispatch.sh. Fall back to hash if unavailable."""
     import subprocess
+
     try:
         r = subprocess.run(["cksum"], input=s.encode(), capture_output=True, check=True)
         return int(r.stdout.split()[0])
@@ -106,30 +108,32 @@ def fairies() -> list[dict]:
         burst = count_burst(sid, now)
         pan, drift_amp = drift(float(r["pan_home"]), burst, h, now)
         q = questions.get(sid, {})
-        out.append({
-            "sid": sid,
-            "sid_hash": h,
-            "sid_short": sid[:8],
-            "project": r["project"],
-            "project_short": Path(r["project"]).name or r["project"],
-            "pbas": r["pbas"],
-            "pan_home": r["pan_home"],
-            "pan": pan,
-            "drift": drift_amp,
-            "burst": burst,
-            "last_event": r.get("last_event", ""),
-            "last_seen": last_seen,
-            "idle_s": int(now - last_seen),
-            "text": q.get("text", "")[:80],
-            "priority": q.get("priority", 9),
-            "status": q.get("status", ""),
-            # Dynamics: is this fairy speaking right now?
-            "speaking_from": r.get("speaking_from", 0),
-            "speaking_until": r.get("speaking_until", 0),
-            "speaking_distance": r.get("speaking_distance", 0.85),
-            "speaking_vol": r.get("speaking_vol", 0.3),
-            "speaking_tier": r.get("speaking_tier", ""),
-        })
+        out.append(
+            {
+                "sid": sid,
+                "sid_hash": h,
+                "sid_short": sid[:8],
+                "project": r["project"],
+                "project_short": Path(r["project"]).name or r["project"],
+                "pbas": r["pbas"],
+                "pan_home": r["pan_home"],
+                "pan": pan,
+                "drift": drift_amp,
+                "burst": burst,
+                "last_event": r.get("last_event", ""),
+                "last_seen": last_seen,
+                "idle_s": int(now - last_seen),
+                "text": q.get("text", "")[:80],
+                "priority": q.get("priority", 9),
+                "status": q.get("status", ""),
+                # Dynamics: is this fairy speaking right now?
+                "speaking_from": r.get("speaking_from", 0),
+                "speaking_until": r.get("speaking_until", 0),
+                "speaking_distance": r.get("speaking_distance", 0.85),
+                "speaking_vol": r.get("speaking_vol", 0.3),
+                "speaking_tier": r.get("speaking_tier", ""),
+            }
+        )
     out.sort(key=lambda x: x["pan"])
     return out
 
@@ -366,7 +370,8 @@ requestAnimationFrame(render);
 
 
 class H(http.server.BaseHTTPRequestHandler):
-    def log_message(self, *a): pass
+    def log_message(self, *a):
+        pass
 
     def do_GET(self):
         if self.path == "/api/fairies":
