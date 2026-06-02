@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Claude Code spatial bird dispatcher
+# Claude Code birdwatch dispatcher
 # stdin: hook JSON. Plays a bird call only for high-signal events
 # (approvals / substantive results / questions). Each project gets a different
 # real bird species; pan reflects session "location".
@@ -11,16 +11,16 @@
 #   tier     → distance/vol  — Tier A (approvals) close & loud, Tier B (reports) far & quiet
 #
 # Samples + attribution: ${CLAUDE_PLUGIN_ROOT}/assets/birds/  (see birds-bootstrap.sh)
-# Disable: SPATIAL_AUDIO_OFF=1
+# Disable: BIRDWATCH_OFF=1
 
-[[ -n "${SPATIAL_AUDIO_OFF:-}" ]] && exit 0
+[[ -n "${BIRDWATCH_OFF:-}" ]] && exit 0
 command -v sox  >/dev/null || exit 0
 command -v jq   >/dev/null || exit 0
 
 # Plugin layout: read-only assets under CLAUDE_PLUGIN_ROOT, runtime state under
 # CLAUDE_PLUGIN_DATA. Both fall back so the script also runs standalone.
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
-STATE_DIR="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/state}/spatial"
+STATE_DIR="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/state}/birdwatch"
 BIRD_DIR="$PLUGIN_ROOT/assets/birds"
 SAMP_DIR="$BIRD_DIR/samples"
 SPECIES_JSON="$BIRD_DIR/species.json"
@@ -144,10 +144,10 @@ case "$evt" in
 esac
 
 # --- Rate limit (per session, 4s) --------------------------------------------
-LOCK="/tmp/cc-spatial-${sid}.lock"
+LOCK="/tmp/cc-birdwatch-${sid}.lock"
 if [[ -f "$LOCK" ]]; then
   LAST=$(stat -f %m "$LOCK" 2>/dev/null || echo 0)
-  (( NOW - LAST < ${SPATIAL_AUDIO_RATE_LIMIT:-4} )) && exit 0
+  (( NOW - LAST < ${BIRDWATCH_RATE_LIMIT:-4} )) && exit 0
 fi
 touch "$LOCK"
 
@@ -178,10 +178,10 @@ esac
 # Queue entry is still logged so `ask.sh list` shows it; only the voice is muted.
 if [[ "$tier" == "B" ]]; then
   PROJ_KEY=$(printf '%s' "$project" | tr -c 'A-Za-z0-9' _)
-  PLOCK="/tmp/cc-spatial-proj-${PROJ_KEY}.tierB.lock"
+  PLOCK="/tmp/cc-birdwatch-proj-${PROJ_KEY}.tierB.lock"
   if [[ -f "$PLOCK" ]]; then
     PLAST=$(stat -f %m "$PLOCK" 2>/dev/null || echo 0)
-    if (( NOW - PLAST < ${SPATIAL_TIER_B_COOLDOWN:-15} )); then
+    if (( NOW - PLAST < ${BIRDWATCH_TIER_B_COOLDOWN:-15} )); then
       silent_tier_b=1
     fi
   fi
@@ -235,7 +235,7 @@ jq -nc --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
 
 # --- Render bird sample with pan/vol/distance ---------------------------------
 # Tier A: full call, near.   Tier B: shorter chirp with low-pass for "distance".
-OUT="/tmp/cc-spatial-${sid}-$$.wav"
+OUT="/tmp/cc-birdwatch-${sid}-$$.wav"
 if [[ "$tier" == "B" ]]; then
   sox "$BIRD_WAV" -c 2 -r 44100 "$OUT" \
       remix 1v"$L" 1v"$R" \
@@ -255,7 +255,7 @@ fi
 DUR=$(sox "$OUT" -n stat 2>&1 | awk '/^Length/ {printf "%.2f", $3+0}')
 [[ -z "$DUR" ]] && DUR=2.0
 # Count pending jobs (ours already moved to queue dir below; N ahead = count-1)
-QDEPTH=$(ls /tmp/cc-spatial-queue 2>/dev/null | wc -l | tr -d ' ')
+QDEPTH=$(ls /tmp/cc-birdwatch-queue 2>/dev/null | wc -l | tr -d ' ')
 SPK_FROM=$(awk -v n="$NOW" -v q="$QDEPTH" 'BEGIN{printf "%d", n + q*2}')   # 2s/item estimate
 SPK_UNTIL=$(awk -v f="$SPK_FROM" -v d="$DUR" 'BEGIN{printf "%d", f + d + 1}')
 jq --argjson spkfrom "$SPK_FROM" --argjson spkuntil "$SPK_UNTIL" \
@@ -264,8 +264,8 @@ jq --argjson spkfrom "$SPK_FROM" --argjson spkuntil "$SPK_UNTIL" \
          speaking_distance:$dist, speaking_vol:$vol_dist, speaking_tier:$tier}' \
    "$SREG" > "${SREG}.tmp" 2>/dev/null && mv "${SREG}.tmp" "$SREG"
 
-LOCK_DIR=/tmp/cc-spatial-play.lockdir
-QUEUE_DIR=/tmp/cc-spatial-queue
+LOCK_DIR=/tmp/cc-birdwatch-play.lockdir
+QUEUE_DIR=/tmp/cc-birdwatch-queue
 mkdir -p "$QUEUE_DIR"
 QJOB="${QUEUE_DIR}/$(date +%s)-$$.wav"
 mv "$OUT" "$QJOB"

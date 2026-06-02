@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Spatial audio dashboard — live 2D visualization of Claude Code "fairies".
+"""Birdwatch dashboard — live 2D visualization of Claude Code "fairies".
 
 Run:  scripts/dashboard.py   (then open http://localhost:8765)
 
-Reads state from ${CLAUDE_PLUGIN_DATA}/spatial (falls back to ~/.claude/state/spatial):
+Reads state from ${CLAUDE_PLUGIN_DATA}/birdwatch (falls back to ~/.claude/state/birdwatch):
   sessions/<sid>.json  (registry: project, pbas, pan_home)
   activity/<sid>.log   (timestamped event stream)
   questions.jsonl      (last text + priority)
@@ -19,9 +19,9 @@ import socketserver
 import time
 from pathlib import Path
 
-PORT = int(os.environ.get("SPATIAL_DASH_PORT", "8765"))
+PORT = int(os.environ.get("BIRDWATCH_DASH_PORT", "8765"))
 _DATA = os.environ.get("CLAUDE_PLUGIN_DATA") or str(Path.home() / ".claude/state")
-ROOT = Path(_DATA) / "spatial"
+ROOT = Path(_DATA) / "birdwatch"
 
 DRIFT_WINDOW = 30    # seconds — matches dispatch.sh BURST calc
 ACTIVE_WINDOW = 1800 # seconds — hide sessions idle longer than 30min
@@ -135,7 +135,7 @@ def fairies() -> list[dict]:
 
 
 INDEX_HTML = r"""<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><title>Spatial Fairies</title>
+<html lang="en"><head><meta charset="UTF-8"><title>Birdwatch</title>
 <style>
   body{margin:0;background:#05070b;color:#cdd6f4;font-family:-apple-system,system-ui,sans-serif;overflow:hidden}
   #hud{position:fixed;top:8px;left:12px;font-size:12px;opacity:.7;z-index:2}
@@ -148,7 +148,7 @@ INDEX_HTML = r"""<!DOCTYPE html>
   canvas{display:block}
 </style></head>
 <body>
-<div id="hud">Spatial Fairies · <span id="count">0</span> · speaking <span id="nspk">0</span> · <span id="t"></span></div>
+<div id="hud">Birdwatch · <span id="count">0</span> · speaking <span id="nspk">0</span> · <span id="t"></span></div>
 <div id="list"></div>
 <canvas id="c"></canvas>
 <script>
@@ -394,5 +394,5 @@ class ReuseTCPServer(socketserver.ThreadingTCPServer):
 
 if __name__ == "__main__":
     with ReuseTCPServer(("127.0.0.1", PORT), H) as s:
-        print(f"Spatial dashboard: http://localhost:{PORT}")
+        print(f"Birdwatch dashboard: http://localhost:{PORT}")
         s.serve_forever()

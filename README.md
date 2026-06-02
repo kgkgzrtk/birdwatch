@@ -22,7 +22,7 @@ A live dashboard visualizes sessions as birds orbiting you, approaching when the
 
 ```
 /plugin marketplace add kgkgzrtk/birdwatch
-/plugin install spatial-audio@birdwatch
+/plugin install birdwatch@birdwatch
 ```
 
 ## Requirements
@@ -33,19 +33,19 @@ A live dashboard visualizes sessions as birds orbiting you, approaching when the
 
 ## Commands
 
-- `/spatial-audio:dashboard` — launch the orbit dashboard at http://localhost:8765
-- `/spatial-audio:inbox` — list pending approvals/questions across all sessions
+- `/birdwatch:dashboard` — launch the orbit dashboard at http://localhost:8765
+- `/birdwatch:inbox` — list pending approvals/questions across all sessions
 
 ## Tuning
 
 | Env | Effect |
 |---|---|
-| `SPATIAL_AUDIO_OFF=1` | mute everything |
-| `SPATIAL_AUDIO_RATE_LIMIT` | per-session min seconds between chirps (default 4) |
-| `SPATIAL_TIER_B_COOLDOWN` | per-project report cooldown seconds (default 15) |
-| `SPATIAL_DASH_PORT` | dashboard port (default 8765) |
+| `BIRDWATCH_OFF=1` | mute everything |
+| `BIRDWATCH_RATE_LIMIT` | per-session min seconds between chirps (default 4) |
+| `BIRDWATCH_TIER_B_COOLDOWN` | per-project report cooldown seconds (default 15) |
+| `BIRDWATCH_DASH_PORT` | dashboard port (default 8765) |
 
-Runtime state lives in `${CLAUDE_PLUGIN_DATA}/spatial`. To add or refresh species,
+Runtime state lives in `${CLAUDE_PLUGIN_DATA}/birdwatch`. To add or refresh species,
 edit the `SPECIES` list in `scripts/birds-bootstrap.sh` and re-run it (appends to the
 end so existing project→bird mappings stay stable).
 

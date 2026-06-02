@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
-  "name": "spatial-audio",
-  "displayName": "Spatial Audio",
-  "version": "1.1.0",
+  "name": "birdwatch",
+  "displayName": "Birdwatch",
+  "version": "1.2.0",
   "description": "Per-project bird-call spatial audio for monitoring Claude Code sessions",
   "author": { "name": "Scibit" },
   "license": "MIT",
@@ -11,6 +11,7 @@
   "keywords": [
     "claude-code",
     "claude-code-plugin",
+    "birdwatch",
     "spatial-audio",
     "sonification",
     "hooks",

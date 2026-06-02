@@ -19,7 +19,7 @@ mkdir -p "$SAMP_DIR" "$RAW_DIR"
 
 # Wikimedia requires a descriptive User-Agent; anonymous requests without one
 # can be rate-limited or rejected with HTML error pages.
-UA='ClaudeCode-SpatialAudio/1.0 (https://github.com/anthropics/claude-code; bird-samples)'
+UA='ClaudeCode-Birdwatch/1.0 (https://github.com/anthropics/claude-code; bird-samples)'
 
 # Species list: slug | Latin name | common name | preferred Commons file (optional, blank = auto-pick)
 # Order matters: project hash → species index (stable for as long as this list grows).

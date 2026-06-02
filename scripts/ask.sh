@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Spatial ask — inbox-style view of pending questions from all CC sessions,
+# Birdwatch ask — inbox-style view of pending questions from all CC sessions,
 # grouped by project and priority. Answer sends back via tmux send-keys.
 #
 # Subcommands:
@@ -8,7 +8,7 @@
 #   ask.sh send <pane> <msg># direct send without queue (fallback: old behaviour)
 set -u
 
-Q="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/state}/spatial/questions.jsonl"
+Q="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/state}/birdwatch/questions.jsonl"
 mkdir -p "$(dirname "$Q")"
 touch "$Q"
 
