@@ -4,6 +4,12 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) ![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757) ![Platform: macOS](https://img.shields.io/badge/platform-macOS-000?logo=apple&logoColor=white)
 
+**Notification fatigue?** Let your workspace go wild. With birdwatch, every
+Claude Code session becomes a real bird singing somewhere around you — so each
+ping that used to spike your stress arrives instead as birdsong drifting through
+a forest. Glance up only when the chorus calls; the rest of the time, just enjoy
+the quiet woodland your terminal has become.
+
 Spatial audio monitoring for Claude Code. Every project sings as a different
 **real bird species**, so you can hear which of your sessions needs you without
 looking. Approvals lean in close to your ear; background reports drift far away
