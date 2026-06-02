@@ -38,6 +38,12 @@ if [[ -z "$cwd" && -n "$tx" ]]; then
 fi
 project=${cwd:-unknown}
 
+# Harden: session_id flows into file paths and /tmp lock names below. Strip any
+# character that could traverse directories or inject a path separator, so a
+# malformed/hostile session_id can never write outside the state dirs.
+sid=${sid//[^A-Za-z0-9._-]/_}
+[[ -z "$sid" ]] && sid=x
+
 # --- Activity tracking (all events, silent or not) ---------------------------
 ACT_DIR="$STATE_DIR/activity"
 REG_DIR="$STATE_DIR/sessions"

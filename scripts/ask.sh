@@ -12,6 +12,17 @@ Q="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/state}/spatial/questions.jsonl"
 mkdir -p "$(dirname "$Q")"
 touch "$Q"
 
+# Deliver an answer to a tmux pane. Two safety guards:
+#  -l  : send the payload LITERALLY so a reply that happens to be a key name
+#        (e.g. "Enter", "C-c", "C-u") is typed as text, never injected as a key.
+#  pane: must match tmux's pane-id format (%N) before we target it, so a stray
+#        value from questions.jsonl/argv can't retarget another session.
+send_pane() {
+  local pane=$1 text=$2
+  [[ "$pane" =~ ^%[0-9]+$ ]] || { echo "invalid pane id: $pane" >&2; return 1; }
+  tmux send-keys -t "$pane" -l -- "$text" && tmux send-keys -t "$pane" Enter
+}
+
 list_pending() {
   # Pending only, sorted by priority asc, ts asc; project-grouped
   jq -c 'select(.status=="pending")' "$Q" 2>/dev/null \
@@ -77,8 +88,7 @@ pick_and_answer() {
   read -r REPLY
   [[ -z "$REPLY" ]] && { echo "空のメッセージ、中止"; return 0; }
 
-  if [[ -n "$PANE" ]]; then
-    tmux send-keys -t "$PANE" -- "$REPLY" 2>/dev/null && tmux send-keys -t "$PANE" Enter
+  if [[ -n "$PANE" && "$PANE" != "null" ]] && send_pane "$PANE" "$REPLY" 2>/dev/null; then
     echo "送信: $PANE ← $REPLY"
   else
     echo "tmux pane が分からないため送信できません（手動で入力してください）: $REPLY"
@@ -123,8 +133,7 @@ auto_send() {
   PANE=$(jq -r '.pane' <<<"$ENTRY")
   SID=$( jq -r '.session_id' <<<"$ENTRY")
   TS=$(  jq -r '.ts'         <<<"$ENTRY")
-  if [[ -n "$PANE" && "$PANE" != "null" ]]; then
-    tmux send-keys -t "$PANE" -- "$TEXT" && tmux send-keys -t "$PANE" Enter
+  if [[ -n "$PANE" && "$PANE" != "null" ]] && send_pane "$PANE" "$TEXT"; then
     printf '→ %s ← %s\n' "$PANE" "$TEXT"
     jq -c --arg ts "$TS" --arg sid "$SID" \
       'if (.ts==$ts and .session_id==$sid) then .status="answered" else . end' \
@@ -150,7 +159,7 @@ case "${1:-}" in
     shift
     PANE=$1; shift
     MSG="$*"
-    tmux send-keys -t "$PANE" -- "$MSG" && tmux send-keys -t "$PANE" Enter
+    send_pane "$PANE" "$MSG"
     ;;
   mic)
     # Record + transcribe + answer picker
@@ -185,8 +194,7 @@ case "${1:-}" in
     PANE=$(jq -r '.pane' <<<"$ENTRY")
     SID=$(jq -r '.session_id' <<<"$ENTRY")
     TS=$(jq -r '.ts' <<<"$ENTRY")
-    if [[ -n "$PANE" && "$PANE" != "null" ]]; then
-      tmux send-keys -t "$PANE" -- "$TEXT" && tmux send-keys -t "$PANE" Enter
+    if [[ -n "$PANE" && "$PANE" != "null" ]] && send_pane "$PANE" "$TEXT"; then
       echo "送信: $PANE ← $TEXT"
     else
       echo "tmux pane 不明のため送信不可: $TEXT"

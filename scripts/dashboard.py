@@ -342,14 +342,16 @@ function render(){
     const bSpk = (b.speaking_until && t < b.speaking_until) ? 0 : 1;
     return aSpk - bSpk || (a.priority - b.priority);
   });
+  const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   listEl.innerHTML = sorted.slice(0, 50).map(f => {
     const spk = (f.speaking_until && t < f.speaking_until) ? ' spk' : '';
     const remain = spk ? ` <span class="badge">${(f.speaking_until - t).toFixed(1)}s</span>` : '';
     return `<div class="row${spk}">
-      <div class="proj">${f.project_short}${remain}</div>
+      <div class="proj">${esc(f.project_short)}${remain}</div>
       <div><span class="${byPrio[f.priority]||''}">P${f.priority}</span>
-        · ${f.sid_short} · pan ${f.pan.toFixed(2)} · burst ${f.burst} · idle ${f.idle_s}s</div>
-      <div style="color:#9aa5b1">${f.last_event}${f.text?': '+f.text.slice(0,60):''}</div>
+        · ${esc(f.sid_short)} · pan ${f.pan.toFixed(2)} · burst ${f.burst} · idle ${f.idle_s}s</div>
+      <div style="color:#9aa5b1">${esc(f.last_event)}${f.text?': '+esc(f.text.slice(0,60)):''}</div>
     </div>`;
   }).join('');
 
