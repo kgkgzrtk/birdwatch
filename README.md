@@ -2,6 +2,8 @@
 
 # birdwatch
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) ![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757) ![Platform: macOS](https://img.shields.io/badge/platform-macOS-000?logo=apple&logoColor=white)
+
 Spatial audio monitoring for Claude Code. Every project sings as a different
 **real bird species**, so you can hear which of your sessions needs you without
 looking. Approvals lean in close to your ear; background reports drift far away
@@ -13,6 +15,8 @@ and quiet. Built as hooks — no model tokens, no chat noise.
 - **storm control** — same-project reports are throttled to one chirp / 15s
 
 A live dashboard visualizes sessions as birds orbiting you, approaching when they speak.
+
+![birdwatch dashboard](assets/dashboard.png)
 
 ## Install (private marketplace)
 
