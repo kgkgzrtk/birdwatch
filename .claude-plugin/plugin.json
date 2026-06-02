@@ -1,0 +1,8 @@
+{
+  "name": "spatial-audio",
+  "displayName": "Spatial Audio",
+  "version": "1.0.0",
+  "description": "Per-project bird-call spatial audio for monitoring Claude Code sessions",
+  "author": { "name": "Scibit" },
+  "repository": "https://github.com/kgkgzrtk/birdwatch"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "birdwatch",
+  "owner": { "name": "kgkgzrtk" },
+  "plugins": [
+    { "name": "spatial-audio", "source": "./" }
+  ]
+}

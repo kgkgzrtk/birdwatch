@@ -1,0 +1,10 @@
+# Re-downloadable source recordings (39MB) — regenerate with birds-bootstrap.sh
+assets/birds/raw/
+
+# Runtime state (lives in ${CLAUDE_PLUGIN_DATA} at runtime; never commit)
+state/
+
+# Scratch
+*.tmp
+*.lock
+.DS_Store

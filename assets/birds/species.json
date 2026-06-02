@@ -1,0 +1,226 @@
+[
+  {
+    "slug": "robin",
+    "latin": "Erithacus rubecula",
+    "common": "European Robin",
+    "license": "CC BY-SA 3.0",
+    "artist": "Jonathon Jongsma",
+    "source": "Erithacus rubecula - European Robin - XC114615.ogg"
+  },
+  {
+    "slug": "blackbird",
+    "latin": "Turdus merula",
+    "common": "Common Blackbird",
+    "license": "CC BY-SA 3.0",
+    "artist": "Adrienne Eaton",
+    "source": "Turdus merula - Common Blackbird XC123548.ogg"
+  },
+  {
+    "slug": "cuckoo",
+    "latin": "Cuculus canorus",
+    "common": "Common Cuckoo",
+    "license": "CC BY-SA 4.0",
+    "artist": "Alexander Kurthy",
+    "source": "Cuculus canorus - Common Cuckoo XC84060.mp3"
+  },
+  {
+    "slug": "greattit",
+    "latin": "Parus major",
+    "common": "Great Tit",
+    "license": "CC BY-SA 3.0",
+    "artist": "Gavin Vella",
+    "source": "Parus major - Great Tit XC129643.ogg"
+  },
+  {
+    "slug": "wren",
+    "latin": "Troglodytes troglodytes",
+    "common": "Eurasian Wren",
+    "license": "CC BY-SA 3.0",
+    "artist": "Dan Stowell",
+    "source": "Troglodytes troglodytes - Eurasian Wren XC125791.ogg"
+  },
+  {
+    "slug": "nightingale",
+    "latin": "Luscinia megarhynchos",
+    "common": "Common Nightingale",
+    "license": "CC BY-SA 4.0",
+    "artist": "Sander Pieterse",
+    "source": "XC138451 - Nachtegaal - Luscinia megarhynchos.ogg"
+  },
+  {
+    "slug": "woodpecker",
+    "latin": "Dendrocopos major",
+    "common": "Great Spotted Woodpecker",
+    "license": "CC BY-SA 4.0",
+    "artist": "Sander Pieterse",
+    "source": "XC47350 - Grote Bonte Specht - Dendrocopos major.ogg"
+  },
+  {
+    "slug": "tawnyowl",
+    "latin": "Strix aluco",
+    "common": "Tawny Owl",
+    "license": "CC BY-SA 4.0",
+    "artist": "Alexander Kurthy",
+    "source": "Strix aluco - Tawny Owl XC86915.mp3"
+  },
+  {
+    "slug": "magpie",
+    "latin": "Pica pica",
+    "common": "Eurasian Magpie",
+    "license": "CC BY-SA 4.0",
+    "artist": "Joost van Bruggen",
+    "source": "Pica pica - Eurasian Magpie XC432921.mp3"
+  },
+  {
+    "slug": "raven",
+    "latin": "Corvus corax",
+    "common": "Common Raven",
+    "license": "CC BY-SA 3.0",
+    "artist": "Jonathon Jongsma",
+    "source": "Corvus corax - Northern Raven XC139573.ogg"
+  },
+  {
+    "slug": "skylark",
+    "latin": "Alauda arvensis",
+    "common": "Eurasian Skylark",
+    "license": "CC BY-SA 4.0",
+    "artist": "Phoenicurus ochruros",
+    "source": "Alauda arvensis - Eurasian Skylark XC423566.mp3"
+  },
+  {
+    "slug": "chiffchaff",
+    "latin": "Phylloscopus collybita",
+    "common": "Common Chiffchaff",
+    "license": "CC BY-SA 3.0",
+    "artist": "Dan Stowell",
+    "source": "Phylloscopus collybita - Common Chiffchaff XC125415.ogg"
+  },
+  {
+    "slug": "blackcap",
+    "latin": "Sylvia atricapilla",
+    "common": "Eurasian Blackcap",
+    "license": "CC BY-SA 4.0",
+    "artist": "Carlos Andre",
+    "source": "Sylvia atricapilla - Eurasian Blackcap XC241427.mp3"
+  },
+  {
+    "slug": "goldfinch",
+    "latin": "Carduelis carduelis",
+    "common": "European Goldfinch",
+    "license": "CC BY-SA 4.0",
+    "artist": "Sander Pieterse",
+    "source": "XC101464 - Putter - Carduelis carduelis.ogg"
+  },
+  {
+    "slug": "sparrow",
+    "latin": "Passer domesticus",
+    "common": "House Sparrow",
+    "license": "CC BY-SA 3.0",
+    "artist": "Jonathon Jongsma",
+    "source": "Passer domesticus - House Sparrow XC124181.ogg"
+  },
+  {
+    "slug": "swallow",
+    "latin": "Hirundo rustica",
+    "common": "Barn Swallow",
+    "license": "CC BY-SA 3.0",
+    "artist": "Jonathon Jongsma",
+    "source": "Hirundo rustica - Barn Swallow - XC83449.ogg"
+  },
+  {
+    "slug": "collareddove",
+    "latin": "Streptopelia decaocto",
+    "common": "Eurasian Collared Dove",
+    "license": "CC BY-SA 3.0",
+    "artist": "Jonathon Jongsma",
+    "source": "Streptopelia decaocto - Eurasian Collared Dove - XC82758.ogg"
+  },
+  {
+    "slug": "kestrel",
+    "latin": "Falco tinnunculus",
+    "common": "Common Kestrel",
+    "license": "CC BY-SA 4.0",
+    "artist": "Javier Herrera",
+    "source": "Falco tinnunculus - Common Kestrel XC463430.mp3"
+  },
+  {
+    "slug": "mallard",
+    "latin": "Anas platyrhynchos",
+    "common": "Mallard",
+    "license": "CC BY-SA 3.0",
+    "artist": "Jonathon Jongsma",
+    "source": "Anas platyrhynchos - Mallard - XC62258.ogg"
+  },
+  {
+    "slug": "crow",
+    "latin": "Corvus brachyrhynchos",
+    "common": "American Crow",
+    "license": "CC BY-SA 3.0",
+    "artist": "Jonathon Jongsma",
+    "source": "Corvus brachyrhynchos - American Crow XC121396.ogg"
+  },
+  {
+    "slug": "cardinal",
+    "latin": "Cardinalis cardinalis",
+    "common": "Northern Cardinal",
+    "license": "CC BY-SA 3.0",
+    "artist": "Jonathon Jongsma",
+    "source": "Cardinalis cardinalis - Northern Cardinal XC75501.mp3"
+  },
+  {
+    "slug": "mourningdove",
+    "latin": "Zenaida macroura",
+    "common": "Mourning Dove",
+    "license": "CC BY 2.5",
+    "artist": "Francis C, Ortega C, Cruz A",
+    "source": "Zenaida macroura vocalizations - pone.0027052.s009.oga"
+  },
+  {
+    "slug": "loon",
+    "latin": "Gavia immer",
+    "common": "Common Loon",
+    "license": "CC BY-SA 3.0",
+    "artist": "Jonathon Jongsma",
+    "source": "Gavia immer - Great Northern Loon XC139387.ogg"
+  },
+  {
+    "slug": "eagleowl",
+    "latin": "Bubo bubo",
+    "common": "Eurasian Eagle-Owl",
+    "license": "CC BY-SA 4.0",
+    "artist": "Mirko Tomasi",
+    "source": "Bubo bubo - Eurasian Eagle-Owl XC461330.mp3"
+  },
+  {
+    "slug": "uguisu",
+    "latin": "Horornis diphone",
+    "common": "Japanese Bush Warbler",
+    "license": "Public domain",
+    "artist": "Fg2",
+    "source": "SND 4458a.ogg"
+  },
+  {
+    "slug": "swift",
+    "latin": "Apus apus",
+    "common": "Common Swift",
+    "license": "CC BY-SA 4.0",
+    "artist": "Luis Alvarez Menendez",
+    "source": "Apus apus - Common Swift XC554033.mp3"
+  },
+  {
+    "slug": "pheasant",
+    "latin": "Phasianus colchicus",
+    "common": "Common Pheasant",
+    "license": "Public domain",
+    "artist": "Unknown authorUnknown author",
+    "source": "Phasianus colchicus.ogg"
+  },
+  {
+    "slug": "chickadee",
+    "latin": "Poecile atricapillus",
+    "common": "Black-capped Chickadee",
+    "license": "CC BY-SA 3.0",
+    "artist": "Jonathon Jongsma",
+    "source": "Poecile atricapillus - Black-capped Chickadee XC121068.ogg"
+  }
+]
