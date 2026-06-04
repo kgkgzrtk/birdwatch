@@ -25,32 +25,19 @@ A live dashboard visualizes sessions as birds orbiting you, approaching when the
 
 ![birdwatch dashboard](assets/dashboard.png)
 
-## Install (Claude Code plugin)
+## Install
+
+birdwatch is harness-agnostic — any agent runtime that can run a command on
+its events can sing. Pick your harness(es) below; every one writes to the same
+store, so the inbox and dashboard show all sessions side by side (set
+`BIRDWATCH_STATE_DIR` when you mix harnesses so they share one store).
+
+**Claude Code** — install as a plugin:
 
 ```
 /plugin marketplace add kgkgzrtk/birdwatch
 /plugin install birdwatch@birdwatch
 ```
-
-## Requirements
-
-- `sox` and `jq` on `PATH` (the dispatcher exits silently if missing)
-- macOS `afplay` for playback
-- `python3` for the dashboard
-
-## Commands
-
-- `/birdwatch:dashboard` — launch the orbit dashboard at http://localhost:8765
-- `/birdwatch:inbox` — list pending approvals/questions across all sessions
-
-## Multi-harness support
-
-birdwatch is harness-agnostic — any agent runtime that can run a command on
-its events can sing. Claude Code is covered by the plugin itself; adapters for
-other harnesses ship in [`adapters/`](adapters/). All of them write to the
-same store, so the inbox and dashboard show every harness side by side. Set
-`BIRDWATCH_STATE_DIR` when you mix harnesses so the plugin and the adapters
-share one store.
 
 **OpenAI Codex CLI** — point `notify` at the adapter in `~/.codex/config.toml`
 (chain an existing notifier after `--chain` to keep it working):
@@ -77,6 +64,19 @@ openclaw gateway restart
 
 Adapters resolve the dispatcher at `~/github/birdwatch/scripts/dispatch.sh` by
 default; override with `BIRDWATCH_DISPATCH`.
+
+## Requirements
+
+- `sox` and `jq` on `PATH` (the dispatcher exits silently if missing)
+- macOS `afplay` for playback
+- `python3` for the dashboard
+
+## Commands
+
+- `/birdwatch:dashboard` — launch the orbit dashboard at http://localhost:8765
+  (any harness: run `scripts/dashboard.py` directly)
+- `/birdwatch:inbox` — list pending approvals/questions across all sessions
+  (any harness: run `scripts/ask.sh list`)
 
 ## Tuning
 
