@@ -42,6 +42,38 @@ A live dashboard visualizes sessions as birds orbiting you, approaching when the
 - `/birdwatch:dashboard` — launch the orbit dashboard at http://localhost:8765
 - `/birdwatch:inbox` — list pending approvals/questions across all sessions
 
+## Beyond Claude Code
+
+The dispatcher is harness-agnostic — any agent runtime that can run a command
+on its events can sing. Adapters for three harnesses ship in [`adapters/`](adapters/);
+all of them write to the same store, so the inbox and dashboard show every
+harness side by side. Set `BIRDWATCH_STATE_DIR` when you mix harnesses so the
+Claude Code plugin and the adapters share one store.
+
+**OpenAI Codex CLI** — point `notify` at the adapter in `~/.codex/config.toml`
+(chain an existing notifier after `--chain` to keep it working):
+
+```toml
+notify = ["bash", "/path/to/birdwatch/adapters/codex-notify.sh"]
+# or: ["bash", ".../codex-notify.sh", "--chain", "/path/to/your-notifier", "arg", "--"]
+```
+
+**Hermes** — install the hook and restart the gateway:
+
+```
+cp -R adapters/hermes ~/.hermes/hooks/birdwatch
+```
+
+**OpenClaw** — install the internal hook, enable it, restart the gateway:
+
+```
+cp -R adapters/openclaw <your-openclaw-hooks-dir>/birdwatch
+openclaw hooks enable birdwatch
+```
+
+Adapters resolve the dispatcher at `~/github/birdwatch/scripts/dispatch.sh` by
+default; override with `BIRDWATCH_DISPATCH`.
+
 ## Tuning
 
 | Env | Effect |
@@ -50,6 +82,8 @@ A live dashboard visualizes sessions as birds orbiting you, approaching when the
 | `BIRDWATCH_RATE_LIMIT` | per-session min seconds between chirps (default 4) |
 | `BIRDWATCH_TIER_B_COOLDOWN` | per-project report cooldown seconds (default 15) |
 | `BIRDWATCH_DASH_PORT` | dashboard port (default 8765) |
+| `BIRDWATCH_STATE_DIR` | shared state dir across harnesses (wins over `CLAUDE_PLUGIN_DATA`) |
+| `BIRDWATCH_DISPATCH` | dispatcher path used by harness adapters |
 
 Runtime state lives in `${CLAUDE_PLUGIN_DATA}/birdwatch`. To add or refresh species,
 edit the `SPECIES` list in `scripts/birds-bootstrap.sh` and re-run it (appends to the

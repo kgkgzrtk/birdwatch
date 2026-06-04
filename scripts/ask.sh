@@ -8,7 +8,7 @@
 #   ask.sh send <pane> <msg># direct send without queue (fallback: old behaviour)
 set -u
 
-Q="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/state}/birdwatch/questions.jsonl"
+Q="${BIRDWATCH_STATE_DIR:-${CLAUDE_PLUGIN_DATA:-$HOME/.claude/state}}/birdwatch/questions.jsonl"
 mkdir -p "$(dirname "$Q")"
 touch "$Q"
 

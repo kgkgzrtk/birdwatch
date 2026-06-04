@@ -1,0 +1,4 @@
+name: "birdwatch"
+description: "Chirp a per-session bird call when the Hermes agent finishes a turn (birdwatch spatial audio)"
+events:
+  - "agent:end"

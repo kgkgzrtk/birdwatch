@@ -21,7 +21,11 @@ import time
 from pathlib import Path
 
 PORT = int(os.environ.get("BIRDWATCH_DASH_PORT", "8765"))
-_DATA = os.environ.get("CLAUDE_PLUGIN_DATA") or str(Path.home() / ".claude/state")
+_DATA = (
+    os.environ.get("BIRDWATCH_STATE_DIR")
+    or os.environ.get("CLAUDE_PLUGIN_DATA")
+    or str(Path.home() / ".claude/state")
+)
 ROOT = Path(_DATA) / "birdwatch"
 
 DRIFT_WINDOW = 30  # seconds — matches dispatch.sh BURST calc
