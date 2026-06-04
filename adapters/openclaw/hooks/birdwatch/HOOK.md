@@ -10,7 +10,11 @@ Forwards `message:sent` events to the birdwatch dispatcher so every OpenClaw
 agent sings as a real bird — questions arrive near your ear, routine reports
 chirp far away.
 
-Install: copy this directory into an OpenClaw hooks directory (or add it via
-`hooks.extraDirs`), run `openclaw hooks enable birdwatch`, and restart the
-gateway. The dispatcher path defaults to a clone at `~/github/birdwatch`;
-override with the `BIRDWATCH_DISPATCH` environment variable.
+Install (the parent directory is an npm hook pack):
+
+    openclaw plugins install /path/to/birdwatch/adapters/openclaw
+    openclaw hooks enable birdwatch
+    openclaw gateway restart
+
+The dispatcher path defaults to a clone at `~/github/birdwatch`; override with
+the `BIRDWATCH_DISPATCH` environment variable.

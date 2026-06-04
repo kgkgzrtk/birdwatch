@@ -1,0 +1,10 @@
+{
+  "name": "openclaw-birdwatch",
+  "version": "0.2.1",
+  "description": "OpenClaw hook pack — chirp a per-agent bird call when the agent sends a message (birdwatch spatial audio)",
+  "license": "MIT",
+  "repository": "https://github.com/kgkgzrtk/birdwatch",
+  "openclaw": {
+    "hooks": ["./hooks/birdwatch"]
+  }
+}

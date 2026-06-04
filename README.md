@@ -64,11 +64,13 @@ notify = ["bash", "/path/to/birdwatch/adapters/codex/notify.sh"]
 cp -R adapters/hermes ~/.hermes/hooks/birdwatch
 ```
 
-**OpenClaw** — install the internal hook, enable it, restart the gateway:
+**OpenClaw** — `adapters/openclaw` is an official hook pack (npm package with
+`openclaw.hooks`); install it with the plugins CLI:
 
 ```
-cp -R adapters/openclaw <your-openclaw-hooks-dir>/birdwatch
+openclaw plugins install /path/to/birdwatch/adapters/openclaw
 openclaw hooks enable birdwatch
+openclaw gateway restart
 ```
 
 Adapters resolve the dispatcher at `~/github/birdwatch/scripts/dispatch.sh` by
