@@ -2,7 +2,7 @@
 
 # birdwatch
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) ![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757) ![Platform: macOS](https://img.shields.io/badge/platform-macOS-000?logo=apple&logoColor=white)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) ![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-d97757) ![Codex CLI](https://img.shields.io/badge/Codex-notify-10a37f) ![Hermes](https://img.shields.io/badge/Hermes-hook-d4a72c) ![OpenClaw](https://img.shields.io/badge/OpenClaw-hook%20pack-ff5a2d) ![Platform: macOS](https://img.shields.io/badge/platform-macOS-000?logo=apple&logoColor=white)
 
 **Notification fatigue?** Let your workspace go wild. With birdwatch, every
 agent session becomes a real bird singing somewhere around you — so each
