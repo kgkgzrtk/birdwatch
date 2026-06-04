@@ -5,12 +5,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) ![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757) ![Platform: macOS](https://img.shields.io/badge/platform-macOS-000?logo=apple&logoColor=white)
 
 **Notification fatigue?** Let your workspace go wild. With birdwatch, every
-Claude Code session becomes a real bird singing somewhere around you — so each
+agent session becomes a real bird singing somewhere around you — so each
 ping that used to spike your stress arrives instead as birdsong drifting through
 a forest. Glance up only when the chorus calls; the rest of the time, just enjoy
 the quiet woodland your terminal has become.
 
-Spatial audio monitoring for Claude Code. Every project sings as a different
+Spatial audio monitoring for your AI agents — Claude Code, Codex CLI, Hermes,
+and OpenClaw. Every project sings as a different
 **real bird species**, so you can hear which of your sessions needs you without
 looking. Approvals lean in close to your ear; background reports drift far away
 and quiet. Built as hooks — no model tokens, no chat noise.
@@ -24,7 +25,7 @@ A live dashboard visualizes sessions as birds orbiting you, approaching when the
 
 ![birdwatch dashboard](assets/dashboard.png)
 
-## Install (private marketplace)
+## Install (Claude Code plugin)
 
 ```
 /plugin marketplace add kgkgzrtk/birdwatch
@@ -88,7 +89,8 @@ default; override with `BIRDWATCH_DISPATCH`.
 | `BIRDWATCH_STATE_DIR` | shared state dir across harnesses (wins over `CLAUDE_PLUGIN_DATA`) |
 | `BIRDWATCH_DISPATCH` | dispatcher path used by harness adapters |
 
-Runtime state lives in `${CLAUDE_PLUGIN_DATA}/birdwatch`. To add or refresh species,
+Runtime state lives in `$BIRDWATCH_STATE_DIR/birdwatch` (falling back to
+`$CLAUDE_PLUGIN_DATA`, then `~/.claude/state`). To add or refresh species,
 edit the `SPECIES` list in `scripts/birds-bootstrap.sh` and re-run it (appends to the
 end so existing project→bird mappings stay stable).
 

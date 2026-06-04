@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Birdwatch ask — inbox-style view of pending questions from all CC sessions,
+# Birdwatch ask — inbox-style view of pending questions from all agent sessions,
 # grouped by project and priority. Answer sends back via tmux send-keys.
 #
 # Subcommands:

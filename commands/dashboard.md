@@ -2,7 +2,7 @@
 description: Launch the birdwatch dashboard (localhost:8765)
 ---
 
-Start the live dashboard that visualizes active Claude Code sessions as birds
+Start the live dashboard that visualizes active agent sessions as birds
 orbiting the listener. Run it in the background and tell the user the URL:
 
 ```bash

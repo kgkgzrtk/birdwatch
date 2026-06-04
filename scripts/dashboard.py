@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Birdwatch dashboard — live 2D visualization of Claude Code "fairies".
+"""Birdwatch dashboard — live 2D visualization of agent-session "fairies".
 
 Run:  scripts/dashboard.py   (then open http://localhost:8765)
 

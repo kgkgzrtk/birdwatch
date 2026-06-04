@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Claude Code birdwatch dispatcher
+# birdwatch dispatcher — harness-agnostic (Claude Code, Codex, Hermes, OpenClaw)
 # stdin: hook JSON. Plays a bird call only for high-signal events
 # (approvals / substantive results / questions). Each project gets a different
 # real bird species; pan reflects session "location".

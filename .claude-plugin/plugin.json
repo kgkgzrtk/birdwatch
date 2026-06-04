@@ -3,7 +3,7 @@
   "name": "birdwatch",
   "displayName": "Birdwatch",
   "version": "0.2.1",
-  "description": "Per-project bird-call spatial audio for monitoring Claude Code sessions",
+  "description": "Per-project bird-call spatial audio for monitoring AI agent sessions (Claude Code, Codex, Hermes, OpenClaw)",
   "author": {
     "name": "Scibit AI"
   },
