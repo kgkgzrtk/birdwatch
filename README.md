@@ -54,8 +54,8 @@ Claude Code plugin and the adapters share one store.
 (chain an existing notifier after `--chain` to keep it working):
 
 ```toml
-notify = ["bash", "/path/to/birdwatch/adapters/codex-notify.sh"]
-# or: ["bash", ".../codex-notify.sh", "--chain", "/path/to/your-notifier", "arg", "--"]
+notify = ["bash", "/path/to/birdwatch/adapters/codex/notify.sh"]
+# or: ["bash", ".../adapters/codex/notify.sh", "--chain", "/path/to/your-notifier", "arg", "--"]
 ```
 
 **Hermes** — install the hook and restart the gateway:

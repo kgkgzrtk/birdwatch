@@ -6,7 +6,7 @@ load test_helper
 
 setup() {
   common_setup
-  ADAPTER="$REPO_ROOT/adapters/codex-notify.sh"
+  ADAPTER="$REPO_ROOT/adapters/codex/notify.sh"
 }
 
 @test "agent-turn-complete maps to Stop with assistant text" {

@@ -10,15 +10,16 @@ const DISPATCH =
   join(homedir(), "github/birdwatch/scripts/dispatch.sh");
 
 const handler = async (event) => {
+  // message:sent — event: {type, action, sessionKey, context:{to, content, success, channelId}}
   if (!event || event.type !== "message" || event.action !== "sent") return;
-  const ctx = event.context || event.payload || {};
-  const raw = ctx.content ?? ctx.text ?? ctx.body ?? "";
+  const ctx = event.context || {};
+  const raw = ctx.content ?? "";
   const text = String(typeof raw === "string" ? raw : JSON.stringify(raw)).trim();
   if (!text) return;
-  const session = String(ctx.sessionKey ?? ctx.sessionId ?? "openclaw");
-  const project = String(
-    ctx.workspaceDir ?? ctx.cwd ?? (ctx.agentId ? `openclaw/${ctx.agentId}` : "openclaw"),
-  );
+  const session = String(event.sessionKey ?? "openclaw");
+  // sessionKey format: agent:<agentId>:<channel>:<chatType>:<peer>
+  const agentId = session.startsWith("agent:") ? session.split(":")[1] : "";
+  const project = agentId ? `openclaw/${agentId}` : "openclaw";
   const payload = JSON.stringify({
     session_id: session,
     hook_event_name: "Stop",

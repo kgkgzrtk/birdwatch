@@ -50,13 +50,6 @@ assert_queue_count() { # session_id expected [base-dir]
   }
 }
 
-# Fetch one field from the last queue entry for a session.
-queue_field() { # session_id jq-field [base-dir]
-  local sid=$1 field=$2 base=${3:-$CLAUDE_PLUGIN_DATA}
-  jq -r --arg sid "$sid" "[ .|select(.session_id==\$sid) ] | .${field}" \
-    <<<"$(jq -cs '.[]' "$(queue_file "$base")" 2>/dev/null)" 2>/dev/null || true
-}
-
 last_entry() { # session_id [base-dir]
   local sid=$1 base=${2:-$CLAUDE_PLUGIN_DATA}
   jq -c --arg sid "$sid" 'select(.session_id==$sid)' "$(queue_file "$base")" 2>/dev/null | tail -1

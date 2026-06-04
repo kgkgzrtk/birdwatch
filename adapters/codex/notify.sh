@@ -4,11 +4,11 @@
 # Codex invokes the configured notify program with its JSON payload appended
 # as the FINAL argument. Point codex at this script in ~/.codex/config.toml:
 #
-#   notify = ["bash", "/path/to/birdwatch/adapters/codex-notify.sh"]
+#   notify = ["bash", "/path/to/birdwatch/adapters/codex/notify.sh"]
 #
 # To keep an existing notifier working, chain it (it receives the payload too):
 #
-#   notify = ["bash", ".../codex-notify.sh", "--chain", "<prog>", "<arg>", "--"]
+#   notify = ["bash", ".../adapters/codex/notify.sh", "--chain", "<prog>", "<arg>", "--"]
 #
 # Event mapping:
 #   agent-turn-complete / turn-ended  -> Stop (last-assistant-message as text)
@@ -16,7 +16,7 @@
 # Anything else (or unparsable input) exits 0 silently — never break codex.
 set -u
 
-PLUGIN_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PLUGIN_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 DISPATCH="${BIRDWATCH_DISPATCH:-$PLUGIN_ROOT/scripts/dispatch.sh}"
 
 # argv: [--chain prog [args...] --] payload
