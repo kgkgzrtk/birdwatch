@@ -5,6 +5,9 @@
   "license": "MIT",
   "repository": "https://github.com/kgkgzrtk/birdwatch",
   "openclaw": {
-    "hooks": ["./hooks/birdwatch"]
-  }
+    "hooks": [
+      "./hooks/birdwatch"
+    ]
+  },
+  "author": "Scibit AI"
 }
