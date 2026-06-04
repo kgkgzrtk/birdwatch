@@ -42,13 +42,14 @@ A live dashboard visualizes sessions as birds orbiting you, approaching when the
 - `/birdwatch:dashboard` — launch the orbit dashboard at http://localhost:8765
 - `/birdwatch:inbox` — list pending approvals/questions across all sessions
 
-## Beyond Claude Code
+## Multi-harness support
 
-The dispatcher is harness-agnostic — any agent runtime that can run a command
-on its events can sing. Adapters for three harnesses ship in [`adapters/`](adapters/);
-all of them write to the same store, so the inbox and dashboard show every
-harness side by side. Set `BIRDWATCH_STATE_DIR` when you mix harnesses so the
-Claude Code plugin and the adapters share one store.
+birdwatch is harness-agnostic — any agent runtime that can run a command on
+its events can sing. Claude Code is covered by the plugin itself; adapters for
+other harnesses ship in [`adapters/`](adapters/). All of them write to the
+same store, so the inbox and dashboard show every harness side by side. Set
+`BIRDWATCH_STATE_DIR` when you mix harnesses so the plugin and the adapters
+share one store.
 
 **OpenAI Codex CLI** — point `notify` at the adapter in `~/.codex/config.toml`
 (chain an existing notifier after `--chain` to keep it working):
