@@ -86,3 +86,13 @@ setup() { common_setup; }
   assert_queue_count "$sid" 1 "$BIRDWATCH_STATE_DIR"
   assert_queue_count "$sid" 0 "$CLAUDE_PLUGIN_DATA"
 }
+
+# --- New: survive minimal launchd-like PATH (gateway-spawned hooks) ----------
+
+@test "dispatch finds deps under a minimal launchd PATH" {
+  sid="path-$UID_SUFFIX"
+  printf '{"session_id":"%s","hook_event_name":"Stop","cwd":"/tmp/proj-%s","text":"Implemented the launchd path fallback and verified it."}' "$sid" "$UID_SUFFIX" \
+    | env -i PATH="/usr/bin:/bin:/usr/sbin:/sbin" HOME="$HOME" CLAUDE_PLUGIN_DATA="$CLAUDE_PLUGIN_DATA" \
+      bash "$DISPATCH" Stop
+  assert_queue_count "$sid" 1
+}

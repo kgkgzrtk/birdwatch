@@ -14,6 +14,10 @@
 # Disable: BIRDWATCH_OFF=1
 
 [[ -n "${BIRDWATCH_OFF:-}" ]] && exit 0
+# Harness gateways (launchd services etc.) spawn hooks with a minimal PATH;
+# include the usual Homebrew/local tool dirs before probing dependencies.
+PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"
+
 command -v sox  >/dev/null || exit 0
 command -v jq   >/dev/null || exit 0
 
