@@ -32,3 +32,13 @@ jobs:
         uses: astral-sh/ruff-action@v3
         with:
           args: format --check
+
+  test:
+    name: bats
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install test dependencies
+        run: sudo apt-get update && sudo apt-get install -y bats sox jq
+      - name: Run tests
+        run: bats test/

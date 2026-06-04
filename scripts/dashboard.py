@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Birdwatch dashboard — live 2D visualization of Claude Code "fairies".
+"""Birdwatch dashboard — live 2D visualization of agent-session "fairies".
 
 Run:  scripts/dashboard.py   (then open http://localhost:8765)
 
@@ -21,7 +21,11 @@ import time
 from pathlib import Path
 
 PORT = int(os.environ.get("BIRDWATCH_DASH_PORT", "8765"))
-_DATA = os.environ.get("CLAUDE_PLUGIN_DATA") or str(Path.home() / ".claude/state")
+_DATA = (
+    os.environ.get("BIRDWATCH_STATE_DIR")
+    or os.environ.get("CLAUDE_PLUGIN_DATA")
+    or str(Path.home() / ".claude/state")
+)
 ROOT = Path(_DATA) / "birdwatch"
 
 DRIFT_WINDOW = 30  # seconds — matches dispatch.sh BURST calc

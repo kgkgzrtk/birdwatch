@@ -1,5 +1,5 @@
 ---
-description: List pending approvals and questions from all Claude Code sessions
+description: List pending approvals and questions from all agent sessions
 ---
 
 Show the birdwatch inbox — pending approvals and questions across every

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Claude Code birdwatch dispatcher
+# birdwatch dispatcher — harness-agnostic (Claude Code, Codex, Hermes, OpenClaw)
 # stdin: hook JSON. Plays a bird call only for high-signal events
 # (approvals / substantive results / questions). Each project gets a different
 # real bird species; pan reflects session "location".
@@ -14,13 +14,17 @@
 # Disable: BIRDWATCH_OFF=1
 
 [[ -n "${BIRDWATCH_OFF:-}" ]] && exit 0
+# Harness gateways (launchd services etc.) spawn hooks with a minimal PATH;
+# include the usual Homebrew/local tool dirs before probing dependencies.
+PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"
+
 command -v sox  >/dev/null || exit 0
 command -v jq   >/dev/null || exit 0
 
 # Plugin layout: read-only assets under CLAUDE_PLUGIN_ROOT, runtime state under
 # CLAUDE_PLUGIN_DATA. Both fall back so the script also runs standalone.
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
-STATE_DIR="${CLAUDE_PLUGIN_DATA:-$HOME/.claude/state}/birdwatch"
+STATE_DIR="${BIRDWATCH_STATE_DIR:-${CLAUDE_PLUGIN_DATA:-$HOME/.claude/state}}/birdwatch"
 BIRD_DIR="$PLUGIN_ROOT/assets/birds"
 SAMP_DIR="$BIRD_DIR/samples"
 SPECIES_JSON="$BIRD_DIR/species.json"
@@ -33,6 +37,8 @@ msg=$(jq -r  '.message         // empty'             <<<"$json" 2>/dev/null)
 tx=$( jq -r  '.transcript_path // empty'             <<<"$json" 2>/dev/null)
 tool=$(jq -r '.tool_name       // empty'             <<<"$json" 2>/dev/null)
 cwd=$( jq -r '.cwd             // empty'             <<<"$json" 2>/dev/null)
+# Direct text payload — lets non-Claude-Code harness adapters skip transcripts.
+txt=$( jq -r '.text            // empty'             <<<"$json" 2>/dev/null)
 if [[ -z "$cwd" && -n "$tx" ]]; then
   cwd=$(dirname "$tx" 2>/dev/null | sed -E 's|.*/projects/||; s|/.*||; s|-|/|g')
 fi
@@ -126,7 +132,11 @@ case "$evt" in
     tier=A; text="$msg"
     ;;
   Stop)
-    raw=$(last_text | strip_md)
+    if [[ -n "$txt" ]]; then
+      raw=$(strip_md <<<"$txt")
+    else
+      raw=$(last_text | strip_md)
+    fi
     if [[ -n "$raw" ]] && is_question "$raw"; then
       tier=A; text=$(cut -c1-100 <<<"$raw")
     elif [[ -n "$raw" ]] && is_substantive "$raw"; then

@@ -1,8 +1,13 @@
 {
   "name": "birdwatch",
-  "description": "Birdwatch — turns Claude Code notifications into per-project birdsong (spatial-audio monitoring, hooks-only).",
-  "owner": { "name": "kgkgzrtk" },
+  "description": "Birdwatch — turns your AI agents' notifications into per-project birdsong (Claude Code, Codex, Hermes, OpenClaw; spatial audio, hooks-only).",
+  "owner": {
+    "name": "kgkgzrtk"
+  },
   "plugins": [
-    { "name": "birdwatch", "source": "./" }
+    {
+      "name": "birdwatch",
+      "source": "./"
+    }
   ]
 }

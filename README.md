@@ -5,12 +5,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) ![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757) ![Platform: macOS](https://img.shields.io/badge/platform-macOS-000?logo=apple&logoColor=white)
 
 **Notification fatigue?** Let your workspace go wild. With birdwatch, every
-Claude Code session becomes a real bird singing somewhere around you — so each
+agent session becomes a real bird singing somewhere around you — so each
 ping that used to spike your stress arrives instead as birdsong drifting through
 a forest. Glance up only when the chorus calls; the rest of the time, just enjoy
 the quiet woodland your terminal has become.
 
-Spatial audio monitoring for Claude Code. Every project sings as a different
+Spatial audio monitoring for your AI agents — Claude Code, Codex CLI, Hermes,
+and OpenClaw. Every project sings as a different
 **real bird species**, so you can hear which of your sessions needs you without
 looking. Approvals lean in close to your ear; background reports drift far away
 and quiet. Built as hooks — no model tokens, no chat noise.
@@ -24,12 +25,45 @@ A live dashboard visualizes sessions as birds orbiting you, approaching when the
 
 ![birdwatch dashboard](assets/dashboard.png)
 
-## Install (private marketplace)
+## Install
+
+birdwatch is harness-agnostic — any agent runtime that can run a command on
+its events can sing. Pick your harness(es) below; every one writes to the same
+store, so the inbox and dashboard show all sessions side by side (set
+`BIRDWATCH_STATE_DIR` when you mix harnesses so they share one store).
+
+**Claude Code** — install as a plugin:
 
 ```
 /plugin marketplace add kgkgzrtk/birdwatch
 /plugin install birdwatch@birdwatch
 ```
+
+**OpenAI Codex CLI** — point `notify` at the adapter in `~/.codex/config.toml`
+(chain an existing notifier after `--chain` to keep it working):
+
+```toml
+notify = ["bash", "/path/to/birdwatch/adapters/codex/notify.sh"]
+# or: ["bash", ".../adapters/codex/notify.sh", "--chain", "/path/to/your-notifier", "arg", "--"]
+```
+
+**Hermes** — install the hook and restart the gateway:
+
+```
+cp -R adapters/hermes ~/.hermes/hooks/birdwatch
+```
+
+**OpenClaw** — `adapters/openclaw` is an official hook pack (npm package with
+`openclaw.hooks`); install it with the plugins CLI:
+
+```
+openclaw plugins install /path/to/birdwatch/adapters/openclaw
+openclaw hooks enable birdwatch
+openclaw gateway restart
+```
+
+Adapters resolve the dispatcher at `~/github/birdwatch/scripts/dispatch.sh` by
+default; override with `BIRDWATCH_DISPATCH`.
 
 ## Requirements
 
@@ -40,7 +74,9 @@ A live dashboard visualizes sessions as birds orbiting you, approaching when the
 ## Commands
 
 - `/birdwatch:dashboard` — launch the orbit dashboard at http://localhost:8765
+  (any harness: run `scripts/dashboard.py` directly)
 - `/birdwatch:inbox` — list pending approvals/questions across all sessions
+  (any harness: run `scripts/ask.sh list`)
 
 ## Tuning
 
@@ -50,8 +86,11 @@ A live dashboard visualizes sessions as birds orbiting you, approaching when the
 | `BIRDWATCH_RATE_LIMIT` | per-session min seconds between chirps (default 4) |
 | `BIRDWATCH_TIER_B_COOLDOWN` | per-project report cooldown seconds (default 15) |
 | `BIRDWATCH_DASH_PORT` | dashboard port (default 8765) |
+| `BIRDWATCH_STATE_DIR` | shared state dir across harnesses (wins over `CLAUDE_PLUGIN_DATA`) |
+| `BIRDWATCH_DISPATCH` | dispatcher path used by harness adapters |
 
-Runtime state lives in `${CLAUDE_PLUGIN_DATA}/birdwatch`. To add or refresh species,
+Runtime state lives in `$BIRDWATCH_STATE_DIR/birdwatch` (falling back to
+`$CLAUDE_PLUGIN_DATA`, then `~/.claude/state`). To add or refresh species,
 edit the `SPECIES` list in `scripts/birds-bootstrap.sh` and re-run it (appends to the
 end so existing project→bird mappings stay stable).
 

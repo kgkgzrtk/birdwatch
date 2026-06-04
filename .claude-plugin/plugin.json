@@ -2,9 +2,11 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "birdwatch",
   "displayName": "Birdwatch",
-  "version": "0.2.0",
-  "description": "Per-project bird-call spatial audio for monitoring Claude Code sessions",
-  "author": { "name": "Scibit" },
+  "version": "0.2.1",
+  "description": "Per-project bird-call spatial audio for monitoring AI agent sessions (Claude Code, Codex, Hermes, OpenClaw)",
+  "author": {
+    "name": "Scibit AI"
+  },
   "license": "MIT",
   "homepage": "https://github.com/kgkgzrtk/birdwatch",
   "repository": "https://github.com/kgkgzrtk/birdwatch",
