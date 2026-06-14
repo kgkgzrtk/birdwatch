@@ -51,9 +51,9 @@
     "slug": "woodpecker",
     "latin": "Dendrocopos major",
     "common": "Great Spotted Woodpecker",
-    "license": "CC BY-SA 4.0",
-    "artist": "Sander Pieterse",
-    "source": "XC47350 - Grote Bonte Specht - Dendrocopos major.ogg"
+    "license": "CC BY-SA 3.0",
+    "artist": "Vladimir Yu. Arkhipov, Arkhivov",
+    "source": "Dendrocopos major.ogg"
   },
   {
     "slug": "tawnyowl",
@@ -108,8 +108,8 @@
     "latin": "Carduelis carduelis",
     "common": "European Goldfinch",
     "license": "CC BY-SA 4.0",
-    "artist": "Sander Pieterse",
-    "source": "XC101464 - Putter - Carduelis carduelis.ogg"
+    "artist": "Gérard OLIVIER",
+    "source": "Carduelis carduelis - Chardonneret Elegant - XC292577.oga"
   },
   {
     "slug": "sparrow",
@@ -171,9 +171,9 @@
     "slug": "mourningdove",
     "latin": "Zenaida macroura",
     "common": "Mourning Dove",
-    "license": "CC BY 2.5",
-    "artist": "Francis C, Ortega C, Cruz A",
-    "source": "Zenaida macroura vocalizations - pone.0027052.s009.oga"
+    "license": "CC BY-SA 3.0",
+    "artist": "Jonathon Jongsma",
+    "source": "Zenaida macroura - Mourning Dove XC128006.ogg"
   },
   {
     "slug": "loon",
@@ -195,25 +195,25 @@
     "slug": "uguisu",
     "latin": "Horornis diphone",
     "common": "Japanese Bush Warbler",
-    "license": "Public domain",
-    "artist": "Fg2",
-    "source": "SND 4458a.ogg"
+    "license": "CC BY-SA 3.0",
+    "artist": "Koba-chan",
+    "source": "Japanese nightingale note03.ogg"
   },
   {
     "slug": "swift",
     "latin": "Apus apus",
     "common": "Common Swift",
     "license": "CC BY-SA 4.0",
-    "artist": "Luis Alvarez Menendez",
-    "source": "Apus apus - Common Swift XC554033.mp3"
+    "artist": "Uku Paal",
+    "source": "Cri de martinet noir, Etonie.wav"
   },
   {
     "slug": "pheasant",
     "latin": "Phasianus colchicus",
     "common": "Common Pheasant",
-    "license": "Public domain",
-    "artist": "Unknown authorUnknown author",
-    "source": "Phasianus colchicus.ogg"
+    "license": "CC BY-SA 3.0",
+    "artist": "Jonathon Jongsma",
+    "source": "Phasianus colchicus - Common Pheasant - XC115583.ogg"
   },
   {
     "slug": "chickadee",
