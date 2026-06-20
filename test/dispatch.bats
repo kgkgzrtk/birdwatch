@@ -96,3 +96,43 @@ setup() { common_setup; }
       bash "$DISPATCH" Stop
   assert_queue_count "$sid" 1
 }
+
+# --- New: per-project species override (dashboard settings) ------------------
+
+# Resolve the species recorded for a session from its registry file.
+registry_species() { # session_id
+  jq -r .species "$CLAUDE_PLUGIN_DATA/birdwatch/sessions/$1.json" 2>/dev/null
+}
+
+@test "overrides.json forces a project's species" {
+  sid="ov-$UID_SUFFIX"
+  proj="/tmp/ovproj-$UID_SUFFIX"
+  mkdir -p "$CLAUDE_PLUGIN_DATA/birdwatch"
+  # pick a valid slug from species.json that is NOT the hash default for this project
+  printf '{"%s":"raven"}' "$proj" > "$CLAUDE_PLUGIN_DATA/birdwatch/overrides.json"
+  run bash "$DISPATCH" PermissionRequest <<<"{\"session_id\":\"$sid\",\"hook_event_name\":\"PermissionRequest\",\"tool_name\":\"Bash\",\"cwd\":\"$proj\"}"
+  [ "$status" -eq 0 ]
+  [ "$(registry_species "$sid")" = "raven" ]
+}
+
+@test "invalid override slug falls back to hash default" {
+  sid="ovbad-$UID_SUFFIX"
+  proj="/tmp/ovbad-$UID_SUFFIX"
+  mkdir -p "$CLAUDE_PLUGIN_DATA/birdwatch"
+  printf '{"%s":"not-a-real-bird"}' "$proj" > "$CLAUDE_PLUGIN_DATA/birdwatch/overrides.json"
+  run bash "$DISPATCH" PermissionRequest <<<"{\"session_id\":\"$sid\",\"hook_event_name\":\"PermissionRequest\",\"tool_name\":\"Bash\",\"cwd\":\"$proj\"}"
+  [ "$status" -eq 0 ]
+  sp="$(registry_species "$sid")"
+  [ -n "$sp" ] && [ "$sp" != "not-a-real-bird" ]
+}
+
+@test "override only affects the matching project" {
+  sid="ovother-$UID_SUFFIX"
+  proj="/tmp/ovother-$UID_SUFFIX"
+  mkdir -p "$CLAUDE_PLUGIN_DATA/birdwatch"
+  # override is for a DIFFERENT project; this one should use the hash default
+  printf '{"/tmp/someoneelse":"raven"}' > "$CLAUDE_PLUGIN_DATA/birdwatch/overrides.json"
+  run bash "$DISPATCH" PermissionRequest <<<"{\"session_id\":\"$sid\",\"hook_event_name\":\"PermissionRequest\",\"tool_name\":\"Bash\",\"cwd\":\"$proj\"}"
+  [ "$status" -eq 0 ]
+  [ "$(registry_species "$sid")" != "raven" ] || skip "hash default happened to be raven"
+}

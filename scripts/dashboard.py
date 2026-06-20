@@ -28,8 +28,88 @@ _DATA = (
 )
 ROOT = Path(_DATA) / "birdwatch"
 
+# Read-only assets (species list + samples) live under the plugin root; fall
+# back to this script's repo layout when run standalone.
+_PLUGIN_ROOT = Path(
+    os.environ.get("CLAUDE_PLUGIN_ROOT") or Path(__file__).resolve().parent.parent
+)
+SPECIES_JSON = _PLUGIN_ROOT / "assets/birds/species.json"
+SAMPLES_DIR = _PLUGIN_ROOT / "assets/birds/samples"
+OVERRIDES = ROOT / "overrides.json"
+
 DRIFT_WINDOW = 30  # seconds — matches dispatch.sh BURST calc
 ACTIVE_WINDOW = 1800  # seconds — hide sessions idle longer than 30min
+
+
+def load_species() -> list[dict]:
+    """Bird species available for selection (slug, common, latin)."""
+    try:
+        data = json.loads(SPECIES_JSON.read_text())
+    except (json.JSONDecodeError, OSError):
+        return []
+    return [
+        {
+            "slug": e["slug"],
+            "common": e.get("common", e["slug"]),
+            "latin": e.get("latin", ""),
+        }
+        for e in data
+        if "slug" in e
+    ]
+
+
+def species_slugs() -> set[str]:
+    return {e["slug"] for e in load_species()}
+
+
+def load_overrides() -> dict[str, str]:
+    try:
+        return json.loads(OVERRIDES.read_text())
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def save_overrides(data: dict[str, str]) -> None:
+    ROOT.mkdir(parents=True, exist_ok=True)
+    tmp = OVERRIDES.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+    tmp.replace(OVERRIDES)
+
+
+def projects_with_species() -> list[dict]:
+    """Distinct projects seen in the registry, with their effective species and
+    whether it is user-overridden."""
+    overrides = load_overrides()
+    seen: dict[str, dict] = {}
+    reg_dir = ROOT / "sessions"
+    if reg_dir.exists():
+        for f in reg_dir.glob("*.json"):
+            try:
+                r = json.loads(f.read_text())
+            except (json.JSONDecodeError, OSError):
+                continue
+            proj = r.get("project")
+            if not proj:
+                continue
+            last = float(r.get("last_seen", 0))
+            cur = seen.get(proj)
+            if cur is None or last > cur["_last"]:
+                seen[proj] = {"_last": last, "species": r.get("species", "")}
+    # include override-only projects that haven't chirped recently
+    for proj in overrides:
+        seen.setdefault(proj, {"_last": 0, "species": overrides[proj]})
+    out = []
+    for proj, v in seen.items():
+        out.append(
+            {
+                "project": proj,
+                "project_short": Path(proj).name or proj,
+                "species": v["species"],
+                "override": overrides.get(proj),
+            }
+        )
+    out.sort(key=lambda x: x["project_short"].lower())
+    return out
 
 
 def load_questions_latest_by_sid() -> dict[str, dict]:
@@ -154,9 +234,33 @@ INDEX_HTML = r"""<!DOCTYPE html>
   .prio1{color:#f38ba8}.prio2{color:#fab387}.prio3{color:#f9e2af}.prio4{color:#a6e3a1}
   .badge{display:inline-block;padding:0 5px;border-radius:3px;background:#313244;font-size:10px;margin-left:4px}
   canvas{display:block}
+  #gear{position:fixed;top:8px;right:352px;z-index:3;cursor:pointer;background:rgba(30,36,48,.9);
+        border:1px solid #2a3140;color:#cdd6f4;border-radius:6px;padding:4px 8px;font-size:14px}
+  #gear:hover{background:#2a3140}
+  #modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:4;display:none;align-items:center;justify-content:center}
+  #modal.open{display:flex}
+  #panel{background:#0e121a;border:1px solid #2a3140;border-radius:10px;width:min(620px,92vw);
+         max-height:82vh;overflow:auto;padding:18px 20px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+  #panel h2{margin:0 0 4px;font-size:16px}
+  #panel .sub{color:#8b949e;font-size:12px;margin-bottom:14px}
+  .prow{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #1a2030}
+  .prow .pn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#89b4fa}
+  .prow .pn small{color:#6e7681;margin-left:6px}
+  .prow select{background:#161b22;color:#cdd6f4;border:1px solid #2a3140;border-radius:5px;padding:3px 6px;font-size:12px;max-width:170px}
+  .prow button{background:#1f2430;color:#cdd6f4;border:1px solid #2a3140;border-radius:5px;cursor:pointer;padding:3px 8px}
+  .prow button:hover{background:#2a3140}
+  #panel .close{float:right;cursor:pointer;color:#8b949e;font-size:18px;line-height:1}
+  #empty{color:#6e7681;font-size:13px;padding:10px 0}
 </style></head>
 <body>
 <div id="hud">Birdwatch · <span id="count">0</span> · speaking <span id="nspk">0</span> · <span id="t"></span></div>
+<div id="gear" title="Per-project bird settings">⚙</div>
+<div id="modal"><div id="panel">
+  <span class="close" id="mclose">×</span>
+  <h2>Per-project bird</h2>
+  <div class="sub">Pick the call each project sings. ▶ previews it. "Auto" returns to the default.</div>
+  <div id="prows"></div>
+</div></div>
 <div id="list"></div>
 <canvas id="c"></canvas>
 <script>
@@ -176,6 +280,63 @@ async function poll(){
   }catch(e){ /* keep stale */ }
 }
 setInterval(poll, 400); poll();
+
+// --- Settings: per-project bird selection ----------------------------------
+const escH = s => String(s==null?'':s).replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let speciesList = [];
+const previewAudio = new Audio();
+
+async function openSettings(){
+  if(!speciesList.length){
+    try{ speciesList = await (await fetch('/api/species')).json(); }catch(e){ speciesList = []; }
+  }
+  await renderSettings();
+  document.getElementById('modal').classList.add('open');
+}
+function closeSettings(){ document.getElementById('modal').classList.remove('open'); previewAudio.pause(); }
+
+async function renderSettings(){
+  let projects = [];
+  try{ projects = await (await fetch('/api/projects', {cache:'no-store'})).json(); }catch(e){}
+  const opts = ['<option value="">Auto (default)</option>'].concat(
+    speciesList.map(s => `<option value="${escH(s.slug)}">${escH(s.common)}</option>`)).join('');
+  const host = document.getElementById('prows');
+  if(!projects.length){ host.innerHTML = '<div id="empty">No projects yet — they appear here after their first chirp.</div>'; return; }
+  host.innerHTML = projects.map(p => {
+    const sel = p.override || '';
+    const cur = p.species ? ` <small>now: ${escH(p.species)}</small>` : '';
+    return `<div class="prow" data-proj="${escH(p.project)}">
+      <span class="pn" title="${escH(p.project)}">${escH(p.project_short)}${cur}</span>
+      <select class="ovsel">${opts}</select>
+      <button class="prev" title="Preview">▶</button>
+    </div>`;
+  }).join('');
+  // set current selection + wire events
+  host.querySelectorAll('.prow').forEach((row,i) => {
+    const sel = row.querySelector('.ovsel');
+    sel.value = projects[i].override || '';
+    sel.addEventListener('change', () => saveOverride(projects[i].project, sel.value || null));
+    row.querySelector('.prev').addEventListener('click', () => {
+      const slug = sel.value || projects[i].species;
+      if(slug){ previewAudio.src = '/api/sample?slug='+encodeURIComponent(slug); previewAudio.play().catch(()=>{}); }
+    });
+  });
+}
+
+async function saveOverride(project, slug){
+  try{
+    await fetch('/api/override', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({project, slug})});
+  }catch(e){}
+  renderSettings();
+}
+
+document.getElementById('gear').addEventListener('click', openSettings);
+document.getElementById('mclose').addEventListener('click', closeSettings);
+document.getElementById('modal').addEventListener('click', e => { if(e.target.id==='modal') closeSettings(); });
+window.addEventListener('keydown', e => { if(e.key==='Escape') closeSettings(); });
+if(location.hash === '#settings') openSettings();  // deep-link to the panel
 
 function pitchToColor(pbas, a=1){
   const h = 200 + ((pbas - 30) / 45) * 160;
@@ -377,24 +538,64 @@ class H(http.server.BaseHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
+    def _send(self, body: bytes, ctype: str, code: int = 200):
+        self.send_response(code)
+        self.send_header("Content-Type", ctype)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _json(self, obj, code: int = 200):
+        self._send(json.dumps(obj).encode(), "application/json; charset=utf-8", code)
+
     def do_GET(self):
-        if self.path == "/api/fairies":
-            body = json.dumps(fairies()).encode()
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-            return
-        if self.path in ("/", "/index.html"):
-            body = INDEX_HTML.encode()
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-            return
+        from urllib.parse import urlparse, parse_qs
+
+        path = urlparse(self.path).path
+        if path == "/api/fairies":
+            return self._json(fairies())
+        if path == "/api/species":
+            return self._json(load_species())
+        if path == "/api/projects":
+            return self._json(projects_with_species())
+        if path == "/api/overrides":
+            return self._json(load_overrides())
+        if path == "/api/sample":
+            slug = (parse_qs(urlparse(self.path).query).get("slug") or [""])[0]
+            if slug not in species_slugs():  # validated → no path traversal
+                return self.send_error(404)
+            wav = SAMPLES_DIR / f"{slug}.wav"
+            try:
+                return self._send(wav.read_bytes(), "audio/wav")
+            except OSError:
+                return self.send_error(404)
+        if path in ("/", "/index.html"):
+            return self._send(INDEX_HTML.encode(), "text/html; charset=utf-8")
         self.send_error(404)
+
+    def do_POST(self):
+        from urllib.parse import urlparse
+
+        if urlparse(self.path).path != "/api/override":
+            return self.send_error(404)
+        try:
+            n = int(self.headers.get("Content-Length", 0))
+            req = json.loads(self.rfile.read(n) or b"{}")
+        except (ValueError, json.JSONDecodeError):
+            return self._json({"error": "bad request"}, 400)
+        project = req.get("project")
+        slug = req.get("slug") or None
+        if not isinstance(project, str) or not project or len(project) > 1024:
+            return self._json({"error": "invalid project"}, 400)
+        if slug is not None and slug not in species_slugs():
+            return self._json({"error": "unknown slug"}, 400)
+        overrides = load_overrides()
+        if slug is None:
+            overrides.pop(project, None)  # clear → back to hash default
+        else:
+            overrides[project] = slug
+        save_overrides(overrides)
+        return self._json({"ok": True, "project": project, "slug": slug})
 
 
 class ReuseTCPServer(socketserver.ThreadingTCPServer):
