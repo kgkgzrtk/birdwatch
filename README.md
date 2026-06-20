@@ -78,6 +78,15 @@ default; override with `BIRDWATCH_DISPATCH`.
 - `/birdwatch:inbox` — list pending approvals/questions across all sessions
   (any harness: run `scripts/ask.sh list`)
 
+## Settings — pick a bird per project
+
+By default each project is auto-assigned a distinct species (stable hash). To
+choose the call yourself, open the dashboard and click the **⚙** button (top
+right, or visit `http://localhost:8765/#settings`). For each project, pick a
+species from the dropdown and **▶** to preview it; "Auto (default)" clears the
+choice. Selections are saved to `$BIRDWATCH_STATE_DIR/birdwatch/overrides.json`
+and take effect on that project's next chirp — no restart needed.
+
 ## Tuning
 
 | Env | Effect |

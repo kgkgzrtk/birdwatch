@@ -68,6 +68,16 @@ p_home=$(awk -v h="$h_sid"  'BEGIN{printf "%.3f", (h % 10000)/10000}')
 N_SPECIES=$(jq 'length' "$SPECIES_JSON" 2>/dev/null || echo 0)
 (( N_SPECIES > 0 )) || exit 0
 SP_IDX=$(awk -v h="$h_proj" -v n="$N_SPECIES" 'BEGIN{printf "%d", h % n}')
+# Per-project override (set via the dashboard settings panel). A valid slug wins
+# over the hash default; an unknown slug is ignored so we never go silent.
+OVERRIDES="$STATE_DIR/overrides.json"
+if [[ -f "$OVERRIDES" ]]; then
+  ov=$(jq -r --arg p "$project" '.[$p] // empty' "$OVERRIDES" 2>/dev/null)
+  if [[ -n "$ov" ]]; then
+    oi=$(jq -r --arg s "$ov" 'map(.slug) | index($s) // empty' "$SPECIES_JSON" 2>/dev/null)
+    [[ -n "$oi" ]] && SP_IDX=$oi
+  fi
+fi
 SP_SLUG=$(jq -r --argjson i "$SP_IDX" '.[$i].slug // empty' "$SPECIES_JSON")
 BIRD_WAV="$SAMP_DIR/$SP_SLUG.wav"
 [[ -f "$BIRD_WAV" ]] || exit 0
